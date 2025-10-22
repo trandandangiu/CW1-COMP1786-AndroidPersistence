@@ -1,8 +1,8 @@
 package com.example.cw1_androidpersistence;
 
-
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,10 +12,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
     RecyclerView recyclerView;
+    FloatingActionButton fabAdd;
     DatabaseHelper db;
-    ArrayList<Contact> contactList;
     ContactAdapter adapter;
+    ArrayList<Contact> contacts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,15 +25,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        fabAdd = findViewById(R.id.fabAdd);
 
         db = new DatabaseHelper(this);
-        contactList = db.getAllContacts();
+        contacts = db.getAllContacts();
 
-        adapter = new ContactAdapter(this, contactList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ContactAdapter(this, contacts);
         recyclerView.setAdapter(adapter);
 
-        FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
         fabAdd.setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, AddContactActivity.class));
         });
@@ -40,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        contactList = db.getAllContacts();
-        adapter = new ContactAdapter(this, contactList);
-        recyclerView.setAdapter(adapter);
+        contacts.clear();
+        contacts.addAll(db.getAllContacts());
+        adapter.notifyDataSetChanged();
     }
 }

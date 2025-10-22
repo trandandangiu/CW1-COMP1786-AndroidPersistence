@@ -3,38 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
-    android:background="@color/white"
-    tools:context=".AddContactActivity">
+    tools:context=".AddContactActivity"
+    android:background="#FAFAFA">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:padding="20dp"
         android:gravity="center_horizontal">
 
-        <!-- Avatar Preview -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="👤 Add / Edit Contact"
+            android:textStyle="bold"
+            android:textColor="@color/purple_500"
+            android:textSize="20sp"
+            android:layout_marginBottom="16dp"/>
+
         <ImageView
             android:id="@+id/ivAvatar"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/avatar_bg"
-            android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_foreground"
-            android:padding="6dp" />
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/avatar_bg"
+            android:scaleType="centerCrop" />
 
-        <!-- Button chọn ảnh -->
         <Button
             android:id="@+id/btnChooseImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose Avatar"
-            android:textColor="@color/white"
+            android:text="Choose Image"
             android:backgroundTint="@color/purple_500"
-            android:layout_marginBottom="20dp" />
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="16dp"/>
 
-        <!-- Họ tên -->
         <EditText
             android:id="@+id/etName"
             android:layout_width="match_parent"
@@ -42,57 +47,33 @@
             android:hint="Full Name"
             android:inputType="textPersonName"
             android:autofillHints="name"
-            android:drawableStart="@android:drawable/ic_menu_edit"
-            android:drawablePadding="8dp"
-            android:padding="10dp"
-            android:backgroundTint="@color/purple_500"
-            android:textColor="@color/black"
-            android:textColorHint="@color/dark_gray"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"/>
 
-        <!-- Số điện thoại -->
         <EditText
             android:id="@+id/etPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Phone Number"
             android:inputType="phone"
-            android:autofillHints="phone"
-            android:drawableStart="@android:drawable/ic_menu_call"
-            android:drawablePadding="8dp"
-            android:padding="10dp"
-            android:backgroundTint="@color/purple_500"
-            android:textColor="@color/black"
-            android:textColorHint="@color/dark_gray"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"/>
 
-        <!-- Email -->
         <EditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email Address"
             android:inputType="textEmailAddress"
-            android:autofillHints="emailAddress"
-            android:drawableStart="@android:drawable/ic_dialog_email"
-            android:drawablePadding="8dp"
-            android:padding="10dp"
-            android:backgroundTint="@color/purple_500"
-            android:textColor="@color/black"
-            android:textColorHint="@color/dark_gray"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="20dp"/>
 
-        <!-- Button lưu -->
         <Button
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Save Contact"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/purple_700"
-            android:textAllCaps="false"
-            android:layout_marginTop="10dp"
-            android:padding="12dp" />
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/purple_500"
+            android:textStyle="bold"
+            android:padding="10dp" />
 
     </LinearLayout>
 </ScrollView>

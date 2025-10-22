@@ -1,25 +1,35 @@
 package com.example.cw1_androidpersistence;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class AddContactActivity extends AppCompatActivity {
 
     EditText etName, etPhone, etEmail;
     ImageView ivAvatar;
-    Button btnChooseImage, btnSave;
-    Uri imageUri = null;
+    Button btnSave, btnChoose;
+    DatabaseHelper db;
+
+    boolean isEditMode = false;
+    int contactId = -1;
+    String avatarUri = "";
+
+    private final ActivityResultLauncher<String> pickImageLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    avatarUri = uri.toString();
+                    ivAvatar.setImageURI(uri);
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,35 +40,48 @@ public class AddContactActivity extends AppCompatActivity {
         etPhone = findViewById(R.id.etPhone);
         etEmail = findViewById(R.id.etEmail);
         ivAvatar = findViewById(R.id.ivAvatar);
-        btnChooseImage = findViewById(R.id.btnChooseImage);
         btnSave = findViewById(R.id.btnSave);
+        btnChoose = findViewById(R.id.btnChooseImage);
+        db = new DatabaseHelper(this);
 
-        btnChooseImage.setOnClickListener(v -> openGallery());
-        btnSave.setOnClickListener(v -> saveContact());
-    }
+        Intent intent = getIntent();
+        isEditMode = intent.getBooleanExtra("isEditMode", false);
 
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, 100);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
-            imageUri = data.getData();
-            ivAvatar.setImageURI(imageUri);
+        if (isEditMode) {
+            contactId = intent.getIntExtra("contactId", -1);
+            Contact c = db.getContactById(contactId);
+            if (c != null) {
+                etName.setText(c.getName());
+                etPhone.setText(c.getPhone());
+                etEmail.setText(c.getEmail());
+                avatarUri = c.getAvatar();
+                if (avatarUri != null && avatarUri.startsWith("content://")) {
+                    ivAvatar.setImageURI(Uri.parse(avatarUri));
+                }
+            }
+            btnSave.setText("Update Contact");
         }
-    }
 
-    private void saveContact() {
-        String name = etName.getText().toString();
-        String phone = etPhone.getText().toString();
-        String email = etEmail.getText().toString();
-        String avatarUri = (imageUri != null) ? imageUri.toString() : "";
+        btnChoose.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
 
-        DatabaseHelper db = new DatabaseHelper(this);
-        db.addContact(name, phone, email, avatarUri);
-        finish();
+        btnSave.setOnClickListener(v -> {
+            String name = etName.getText().toString();
+            String phone = etPhone.getText().toString();
+            String email = etEmail.getText().toString();
+
+            if (name.isEmpty()) {
+                Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (isEditMode) {
+                db.updateContact(contactId, name, phone, email, avatarUri);
+                Toast.makeText(this, "Contact updated!", Toast.LENGTH_SHORT).show();
+            } else {
+                db.addContact(name, phone, email, avatarUri);
+                Toast.makeText(this, "Contact added!", Toast.LENGTH_SHORT).show();
+            }
+            finish();
+        });
     }
 }
